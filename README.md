@@ -1,6 +1,6 @@
 ## GoFaceTrainer - Facial Recognition Model in Go
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/adrianosela/GoFaceTrainer)](https://goreportcard.com/report/github.com/adrianosela/GoFaceTrainer)
+[![Go Report Card](https://goreportcard.com/badge/github.com/adrianosela/gofacetrainer)](https://goreportcard.com/report/github.com/adrianosela/gofacetrainer)
 [![Documentation](https://godoc.org/github.com/adrianosela/GoFaceTrainer?status.svg)](https://godoc.org/github.com/adrianosela/GoFaceTrainer)
 [![GitHub issues](https://img.shields.io/github/issues/adrianosela/GoFaceTrainer.svg)](https://github.com/adrianosela/GoFaceTrainer/issues)
 [![license](https://img.shields.io/github/license/adrianosela/gofacetrainer.svg)](https://github.com/adrianosela/GoFaceTrainer/blob/master/LICENSE)
