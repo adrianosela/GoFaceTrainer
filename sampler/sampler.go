@@ -1,4 +1,4 @@
-package trainer
+package sampler
 
 import (
 	"fmt"
@@ -12,9 +12,9 @@ const (
 	escapeKey      = 27
 )
 
-// FaceTrainer is an abstraction around the necessary OpenCV and MachineBox
-// resources in order to produce a model of a face or facial-expression
-type FaceTrainer struct {
+// FaceSampler is an abstraction around the necessary OpenCV and MachineBox
+// resources in order to sample a model of a face or facial-expression
+type FaceSampler struct {
 	captureDevice  *gocv.VideoCapture
 	window         *gocv.Window
 	baseImgMatrix  gocv.Mat
@@ -23,7 +23,7 @@ type FaceTrainer struct {
 	samples        int
 }
 
-// Settings contains necessary values to initialize a FaceTrainer
+// Settings contains necessary values to initialize a FaceSampler
 type Settings struct {
 	// CaptureDeviceID (default is 0)
 	CaptureDeviceID int
@@ -41,44 +41,44 @@ type Settings struct {
 	WindowTitle string
 }
 
-// NewFaceTrainer is the FaceTrainer constructor
-func NewFaceTrainer(s *Settings) (*FaceTrainer, error) {
-	device, err := gocv.VideoCaptureDevice(s.CaptureDeviceID)
+// NewFaceSampler is the FaceSampler constructor
+func NewFaceSampler(settings *Settings) (*FaceSampler, error) {
+	device, err := gocv.VideoCaptureDevice(settings.CaptureDeviceID)
 	if err != nil {
 		return nil, fmt.Errorf("error opening capture device: %s", err)
 	}
-	if s.FaceboxAddress == "" {
-		s.FaceboxAddress = "http://localhost:8080"
+	if settings.FaceboxAddress == "" {
+		settings.FaceboxAddress = "http://localhost:8080"
 	}
-	if s.WindowTitle == "" {
-		s.WindowTitle = "Face Trainer"
+	if settings.WindowTitle == "" {
+		settings.WindowTitle = "Face Trainer"
 	}
-	if s.FaceAlgoPath == "" {
+	if settings.FaceAlgoPath == "" {
 		return nil, fmt.Errorf("no face recognition algorithm provided")
 	}
 	classifier := gocv.NewCascadeClassifier()
-	classifier.Load(s.FaceAlgoPath)
-	return &FaceTrainer{
+	classifier.Load(settings.FaceAlgoPath)
+	return &FaceSampler{
 		captureDevice:  device,
-		window:         gocv.NewWindow(s.WindowTitle),
+		window:         gocv.NewWindow(settings.WindowTitle),
 		baseImgMatrix:  gocv.NewMat(),
 		faceClassifier: classifier,
-		faceboxClient:  facebox.New(s.FaceboxAddress),
+		faceboxClient:  facebox.New(settings.FaceboxAddress),
 		samples:        defaultSamples,
 	}, nil
 }
 
-// Close closes all closers within a FaceTrainer, should be used in a defer
-// statement immediately after checking the error from NewFaceTrainer
-func (t *FaceTrainer) Close() error {
+// Close closes all closers within a FaceSampler, should be used in a defer
+// statement immediately after checking the error from NewFaceSampler
+func (s *FaceSampler) Close() error {
 	errs := []error{}
-	if err := t.faceClassifier.Close(); err != nil {
+	if err := s.faceClassifier.Close(); err != nil {
 		errs = append(errs, fmt.Errorf("could not close classifier: %s", err))
 	}
-	if err := t.window.Close(); err != nil {
+	if err := s.window.Close(); err != nil {
 		errs = append(errs, fmt.Errorf("could not close window: %s", err))
 	}
-	if err := t.captureDevice.Close(); err != nil {
+	if err := s.captureDevice.Close(); err != nil {
 		errs = append(errs, fmt.Errorf("could not close capture device: %s", err))
 	}
 	if len(errs) != 0 {
@@ -91,26 +91,26 @@ func (t *FaceTrainer) Close() error {
 	return nil
 }
 
-// SampleFace samples a face t.samples times, and saves each sample to a file
-func (t *FaceTrainer) SampleFace() error {
+// Run samples a face t.samples times, and saves each sample to a file
+func (s *FaceSampler) Run() error {
 	for {
-		if ok := t.captureDevice.Read(&t.baseImgMatrix); !ok || t.baseImgMatrix.Empty() {
+		if ok := s.captureDevice.Read(&s.baseImgMatrix); !ok || s.baseImgMatrix.Empty() {
 			continue
 		}
 
-		rects := t.faceClassifier.DetectMultiScale(t.baseImgMatrix)
+		rects := s.faceClassifier.DetectMultiScale(s.baseImgMatrix)
 		for _, r := range rects {
-			imgFace := t.baseImgMatrix.Region(r)
-			imgName := fmt.Sprintf("%d.jpg", t.samples)
+			imgFace := s.baseImgMatrix.Region(r)
+			imgName := fmt.Sprintf("%d.jpg", s.samples)
 			gocv.IMWrite(imgName, imgFace)
 			imgFace.Close()
-			if t.samples--; t.samples == 0 {
+			if s.samples--; s.samples == 0 {
 				return nil
 			}
 		}
 
-		t.window.IMShow(t.baseImgMatrix)
-		if t.window.WaitKey(100) == escapeKey {
+		s.window.IMShow(s.baseImgMatrix)
+		if s.window.WaitKey(100) == escapeKey {
 			return nil
 		}
 	}
