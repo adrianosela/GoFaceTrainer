@@ -6,7 +6,7 @@ train:
 	go run cmd/cmd.go train http://localhost:8080 ./out YOURNAME
 
 run:
-	go run cmd/cmd.go run 0
+	go run cmd.go run 0 http://localhost:8080 face_algos/haarcascade_frontalface_default.xml
 
 clean:
 	rm -rf out
