@@ -31,8 +31,8 @@ type Settings struct {
 	FacesSrcDir string
 }
 
-// NewFaceSampler is the FaceSampler constructor
-func NewFaceSampler(settings Settings) (*FaceTrainer, error) {
+// NewFaceTrainer is the FaceTrainer constructor
+func NewFaceTrainer(settings Settings) (*FaceTrainer, error) {
 	if settings.FaceboxAddress == "" {
 		settings.FaceboxAddress = defaultFaceboxAddr
 	}
@@ -53,6 +53,7 @@ func (t *FaceTrainer) Run() error {
 	}
 	for _, f := range files {
 		if strings.HasSuffix(f.Name(), ".jpg") {
+			// TODO
 			fmt.Println(f.Name())
 		}
 	}
