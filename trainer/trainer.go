@@ -2,14 +2,14 @@ package trainer
 
 import (
 	"fmt"
+
 	"github.com/machinebox/sdk-go/facebox"
 	"gocv.io/x/gocv"
-	"log"
-	"time"
 )
 
 const (
 	defaultSamples = 10
+	escapeKey      = 27
 )
 
 // FaceTrainer is an abstraction around the necessary OpenCV and MachineBox
@@ -20,7 +20,7 @@ type FaceTrainer struct {
 	baseImgMatrix  gocv.Mat
 	faceClassifier gocv.CascadeClassifier
 	faceboxClient  *facebox.Client
-	samples				 int
+	samples        int
 }
 
 // Settings contains necessary values to initialize a FaceTrainer
@@ -64,7 +64,7 @@ func NewFaceTrainer(s *Settings) (*FaceTrainer, error) {
 		baseImgMatrix:  gocv.NewMat(),
 		faceClassifier: classifier,
 		faceboxClient:  facebox.New(s.FaceboxAddress),
-		samples: defaultSamples,
+		samples:        defaultSamples,
 	}, nil
 }
 
@@ -91,33 +91,26 @@ func (t *FaceTrainer) Close() error {
 	return nil
 }
 
-// Train trains a facebox with a face
-func (t *FaceTrainer) Train() error {
+// SampleFace samples a face t.samples times, and saves each sample to a file
+func (t *FaceTrainer) SampleFace() error {
 	for {
 		if ok := t.captureDevice.Read(&t.baseImgMatrix); !ok || t.baseImgMatrix.Empty() {
 			continue
 		}
+
 		rects := t.faceClassifier.DetectMultiScale(t.baseImgMatrix)
 		for _, r := range rects {
-			// Save each found face into the file
 			imgFace := t.baseImgMatrix.Region(r)
-			imgName := fmt.Sprintf("%d.jpg", time.Now().UnixNano())
+			imgName := fmt.Sprintf("%d.jpg", t.samples)
 			gocv.IMWrite(imgName, imgFace)
-			_, err := gocv.IMEncode(".jpg", imgFace)
 			imgFace.Close()
-			if err != nil {
-				log.Printf("unable to encode matrix: %v", err)
-				continue
-			}
-			t.samples--
-			if t.samples == 0 {
+			if t.samples--; t.samples == 0 {
 				return nil
 			}
 		}
 
-		// show the image in the window, and wait 100ms
 		t.window.IMShow(t.baseImgMatrix)
-		if t.window.WaitKey(100) == 27 {
+		if t.window.WaitKey(100) == escapeKey {
 			return nil
 		}
 	}
