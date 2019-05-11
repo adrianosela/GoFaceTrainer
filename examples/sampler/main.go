@@ -1,17 +1,18 @@
 package main
 
 import (
-	"github.com/adrianosela/GoFaceTrainer/sampler"
 	"log"
+
+	"github.com/adrianosela/GoFaceTrainer/sampler"
 )
 
 func main() {
-	s, err := sampler.NewFaceSampler(&sampler.Settings{
+	s, err := sampler.NewFaceSampler(sampler.Settings{
 		CaptureDeviceID: 0,
-		FaceboxAddress:  "http://localhost:8080",
 		FaceAlgoPath:    "../../face_algos/haarcascade_frontalface_default.xml",
 		WindowTitle:     "Face Sampler",
 		NSamples:        25,
+		SaveSamplesDir:  ".",
 	})
 	if err != nil {
 		log.Fatal(err)

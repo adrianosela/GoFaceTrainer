@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	defaultWindowTitle = "Face Sampler"
-	defaultSamples     = 10
+	defaultWindowTitle    = "Face Sampler"
+	defaultSamples        = 10
+	defaultSaveSamplesDir = "."
 
 	escapeKey = 27
 )
@@ -21,16 +22,13 @@ type FaceSampler struct {
 	baseImgMatrix  gocv.Mat
 	faceClassifier gocv.CascadeClassifier
 	samples        int
+	samplesSaveDir string
 }
 
 // Settings contains necessary values to initialize a FaceSampler
 type Settings struct {
 	// CaptureDeviceID (default is 0)
 	CaptureDeviceID int
-
-	// FaceboxAddress is the URL of the MachineBox to use - host:port,
-	// (default is http://localhost:8080)
-	FaceboxAddress string
 
 	// FaceAlgoPath is the path of the classifier algorithm XML file to use
 	// (no default, this is a required argument)
@@ -43,10 +41,14 @@ type Settings struct {
 	// NSamples is how many samples to take in one run of the sampler
 	// (default is 10)
 	NSamples int
+
+	// SaveSamplesDir is the directory where .jpg samples will be saved to
+	// (default is the current directory ".")
+	SaveSamplesDir string
 }
 
 // NewFaceSampler is the FaceSampler constructor
-func NewFaceSampler(settings *Settings) (*FaceSampler, error) {
+func NewFaceSampler(settings Settings) (*FaceSampler, error) {
 	device, err := gocv.VideoCaptureDevice(settings.CaptureDeviceID)
 	if err != nil {
 		return nil, fmt.Errorf("error opening capture device: %s", err)
@@ -60,6 +62,9 @@ func NewFaceSampler(settings *Settings) (*FaceSampler, error) {
 	if settings.NSamples == 0 {
 		settings.NSamples = defaultSamples
 	}
+	if settings.SaveSamplesDir == "" {
+		settings.SaveSamplesDir = defaultSaveSamplesDir
+	}
 	classifier := gocv.NewCascadeClassifier()
 	classifier.Load(settings.FaceAlgoPath)
 	return &FaceSampler{
@@ -68,6 +73,7 @@ func NewFaceSampler(settings *Settings) (*FaceSampler, error) {
 		baseImgMatrix:  gocv.NewMat(),
 		faceClassifier: classifier,
 		samples:        settings.NSamples,
+		samplesSaveDir: settings.SaveSamplesDir,
 	}, nil
 }
 
@@ -104,7 +110,7 @@ func (s *FaceSampler) Run() error {
 		rects := s.faceClassifier.DetectMultiScale(s.baseImgMatrix)
 		for _, r := range rects {
 			imgFace := s.baseImgMatrix.Region(r)
-			imgName := fmt.Sprintf("%d.jpg", s.samples)
+			imgName := fmt.Sprintf("%s/%d.jpg", s.samplesSaveDir, s.samples)
 			gocv.IMWrite(imgName, imgFace)
 			imgFace.Close()
 			if s.samples--; s.samples == 0 {
