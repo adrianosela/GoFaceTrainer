@@ -3,26 +3,23 @@ package sampler
 import (
 	"fmt"
 
-	"github.com/machinebox/sdk-go/facebox"
 	"gocv.io/x/gocv"
 )
 
 const (
-	defaultFaceboxAddress = "http://localhost:8080"
-	defaultWindowTitle    = "Face Trainer"
-	defaultSamples        = 10
+	defaultWindowTitle = "Face Sampler"
+	defaultSamples     = 10
 
 	escapeKey = 27
 )
 
-// FaceSampler is an abstraction around the necessary OpenCV and MachineBox
+// FaceSampler is an abstraction around the necessary OpenCV
 // resources in order to sample a model of a face or facial-expression
 type FaceSampler struct {
 	captureDevice  *gocv.VideoCapture
 	window         *gocv.Window
 	baseImgMatrix  gocv.Mat
 	faceClassifier gocv.CascadeClassifier
-	faceboxClient  *facebox.Client
 	samples        int
 }
 
@@ -54,9 +51,6 @@ func NewFaceSampler(settings *Settings) (*FaceSampler, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error opening capture device: %s", err)
 	}
-	if settings.FaceboxAddress == "" {
-		settings.FaceboxAddress = defaultFaceboxAddress
-	}
 	if settings.WindowTitle == "" {
 		settings.WindowTitle = defaultWindowTitle
 	}
@@ -73,7 +67,6 @@ func NewFaceSampler(settings *Settings) (*FaceSampler, error) {
 		window:         gocv.NewWindow(settings.WindowTitle),
 		baseImgMatrix:  gocv.NewMat(),
 		faceClassifier: classifier,
-		faceboxClient:  facebox.New(settings.FaceboxAddress),
 		samples:        settings.NSamples,
 	}, nil
 }
@@ -101,7 +94,7 @@ func (s *FaceSampler) Close() error {
 	return nil
 }
 
-// Run samples a face t.samples times, and saves each sample to a file
+// Run samples a face NSamples times, and saves each sample to a file
 func (s *FaceSampler) Run() error {
 	for {
 		if ok := s.captureDevice.Read(&s.baseImgMatrix); !ok || s.baseImgMatrix.Empty() {
