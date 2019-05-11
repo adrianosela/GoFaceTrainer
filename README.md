@@ -1,4 +1,4 @@
-## GoFaceTrainer - Train a facial recognition model in Go
+## GoFaceTrainer - Facial Recognition Model in Go
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/adrianosela/GoFaceTrainer)](https://goreportcard.com/report/github.com/adrianosela/GoFaceTrainer)
 [![Documentation](https://godoc.org/github.com/adrianosela/GoFaceTrainer?status.svg)](https://godoc.org/github.com/adrianosela/GoFaceTrainer)
@@ -8,7 +8,7 @@
 ### Step-By-Step Tutorial: 
 
 * **STEP 0 - Prerequisites:**
-	* Download OpenCV for your OS
+	* Download OpenCV for your OS: on mac ```brew install opencv3```
 	* Download Docker for your OS
 	* Download the Go Programming Language (Golang)
 	* Clone this repository:
