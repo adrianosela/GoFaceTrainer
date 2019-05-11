@@ -5,5 +5,8 @@ sample:
 train:
 	go run cmd/cmd.go train http://localhost:8080 ./out
 
+run:
+	go run cmd/cmd.go run 0
+
 clean:
 	rm -rf out

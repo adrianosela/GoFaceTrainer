@@ -11,7 +11,7 @@ import (
 
 func main() {
 	if len(os.Args) <= 1 {
-		log.Fatal("usage: go run cmd.go [train/sample] ...args")
+		log.Fatal("usage: go run cmd.go [sample/train/run] ...args")
 	}
 
 	switch os.Args[1] {
@@ -56,7 +56,9 @@ func main() {
 		}
 		t.Run()
 		return
+	case "run":
+		// TODO
 	default:
-		log.Fatal("usage: go run cmd.go [train/sample] ...args")
+		log.Fatal("usage: go run cmd.go [sample/train/run] ...args")
 	}
 }
