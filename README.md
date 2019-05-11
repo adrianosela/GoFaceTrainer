@@ -25,7 +25,7 @@
 * **STEP 2 - Running Machine Box Locally:**
  * Pull the [machinebox/facebox](https://hub.docker.com/r/machinebox/facebox) Docker image: ```docker pull machinebox/facebox```
  * Run the Docker image, mapping port 8080 on the container to your desired port on your machine (I have chosen port 8080 for my machine port as well), passing your Machine Box API key from step 1 as the ```MB_KEY``` environment variable (example command below). Note that you can override the container's serving port (default 8080) with the ```MB_PORT``` environment variable
- * On your browser, head over to http://localhost:[mapped port] and verify you can see the Machine Box console/UI
+ * On your browser, head over to http://localhost:[mapped-port] and verify you can see the Machine Box console/UI
 
 ```
 $ docker run -p 8080:8080 -e "MB_KEY=$MB_KEY" machinebox/facebox
