@@ -13,6 +13,7 @@ import (
 
 const (
 	defaultWindowTitle = "Face Detector"
+	defaultFaceboxAddr = "http://localhost:8080"
 
 	escapeKey = 27
 )
@@ -51,6 +52,9 @@ func NewFaceDetector(settings Settings) (*FaceDetector, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error opening capture device: %s", err)
 	}
+	if settings.FaceboxAddress == "" {
+		settings.FaceboxAddress = defaultFaceboxAddr
+	}
 	if settings.WindowTitle == "" {
 		settings.WindowTitle = defaultWindowTitle
 	}
@@ -60,6 +64,7 @@ func NewFaceDetector(settings Settings) (*FaceDetector, error) {
 	classifier := gocv.NewCascadeClassifier()
 	classifier.Load(settings.FaceAlgoPath)
 	return &FaceDetector{
+		faceboxClient:  facebox.New(settings.FaceboxAddress),
 		captureDevice:  device,
 		window:         gocv.NewWindow(settings.WindowTitle),
 		baseImgMatrix:  gocv.NewMat(),
@@ -125,9 +130,8 @@ func (d *FaceDetector) Run() error {
 			gocv.Rectangle(&d.baseImgMatrix, r, color.RGBA{0, 0, 255, 0}, 3)
 		}
 
-		// show the image in the window, and wait 100ms
 		d.window.IMShow(d.baseImgMatrix)
-		if d.window.WaitKey(100) == 27 {
+		if d.window.WaitKey(5) == 27 {
 			return nil
 		}
 	}

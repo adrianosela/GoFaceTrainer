@@ -43,12 +43,13 @@ func main() {
 		var set trainer.Settings
 		var err error
 
-		if len(os.Args) != 4 {
-			log.Fatal("usage: go run cmd.go train <facebox_url> <faces_src_dir>")
+		if len(os.Args) != 5 {
+			log.Fatal("usage: go run cmd.go train <facebox_url> <faces_src_dir> <person_name>")
 		}
 
 		set.FaceboxAddress = os.Args[2]
 		set.FacesSrcDir = os.Args[3]
+		set.PersonName = os.Args[4]
 
 		t, err := trainer.NewFaceTrainer(set)
 		if err != nil {

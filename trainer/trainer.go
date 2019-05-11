@@ -70,9 +70,15 @@ func (t *FaceTrainer) Run() error {
 				log.Printf("could not open img file %s: %s", f.Name(), err)
 				continue // move on to next img if we can't open one
 			}
-			if err := t.faceboxClient.Teach(fd, f.Name(), t.personName); err != nil {
+			id := fmt.Sprintf("%s-%s", t.personName, strings.TrimPrefix(f.Name(), ".jpg"))
+			if err := t.faceboxClient.Teach(fd, id, t.personName); err != nil {
 				log.Printf("could not teach facebox using file %s: %s", f.Name(), err)
-				continue // move on to next img if we can't use one
+				continue
+				/*
+					move on to next img if we can't use one. Errors here happen because
+					some objects may be sampled as faces. Facebox will reject images without
+					a face with a 400 Bad Request error
+				*/
 			}
 			log.Printf("Trained facebox with file: %s", f.Name())
 		}
