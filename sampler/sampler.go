@@ -8,8 +8,11 @@ import (
 )
 
 const (
-	defaultSamples = 10
-	escapeKey      = 27
+	defaultFaceboxAddress = "http://localhost:8080"
+	defaultWindowTitle    = "Face Trainer"
+	defaultSamples        = 10
+
+	escapeKey = 27
 )
 
 // FaceSampler is an abstraction around the necessary OpenCV and MachineBox
@@ -39,6 +42,10 @@ type Settings struct {
 	// WindowTitle is the title to be displayed on the window
 	// (default is "Face Trainer")
 	WindowTitle string
+
+	// NSamples is how many samples to take in one run of the sampler
+	// (default is 10)
+	NSamples int
 }
 
 // NewFaceSampler is the FaceSampler constructor
@@ -48,13 +55,16 @@ func NewFaceSampler(settings *Settings) (*FaceSampler, error) {
 		return nil, fmt.Errorf("error opening capture device: %s", err)
 	}
 	if settings.FaceboxAddress == "" {
-		settings.FaceboxAddress = "http://localhost:8080"
+		settings.FaceboxAddress = defaultFaceboxAddress
 	}
 	if settings.WindowTitle == "" {
-		settings.WindowTitle = "Face Trainer"
+		settings.WindowTitle = defaultWindowTitle
 	}
 	if settings.FaceAlgoPath == "" {
 		return nil, fmt.Errorf("no face recognition algorithm provided")
+	}
+	if settings.NSamples == 0 {
+		settings.NSamples = defaultSamples
 	}
 	classifier := gocv.NewCascadeClassifier()
 	classifier.Load(settings.FaceAlgoPath)
@@ -64,7 +74,7 @@ func NewFaceSampler(settings *Settings) (*FaceSampler, error) {
 		baseImgMatrix:  gocv.NewMat(),
 		faceClassifier: classifier,
 		faceboxClient:  facebox.New(settings.FaceboxAddress),
-		samples:        defaultSamples,
+		samples:        settings.NSamples,
 	}, nil
 }
 
@@ -110,7 +120,7 @@ func (s *FaceSampler) Run() error {
 		}
 
 		s.window.IMShow(s.baseImgMatrix)
-		if s.window.WaitKey(100) == escapeKey {
+		if s.window.WaitKey(10) == escapeKey {
 			return nil
 		}
 	}
