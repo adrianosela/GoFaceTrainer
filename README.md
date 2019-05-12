@@ -51,14 +51,15 @@ $ docker run -p 8080:8080 -e "MB_KEY=$MB_KEY" machinebox/facebox
 ![](./tutorial_assets/step2.png)
 
 * **STEP 3 - Sample Your Face:**
-	* Run the Go program in this directory with arguments as below. Note that you must create the output directory before running the command if it does not exist. You can look at the ```"sample"``` Makefile target for another example
+	* Run the Go program in this directory with arguments as below. Note that you must create the output directory before running the command if it does not exist
 
 ```
 go run main.go sample [CAMERA_ID] [FACE_ALGO] [N_SAMPLES] [OUTPUT_DIR]
 ```
 
-> Example:```mkdir out```
-```go run main.go sample 0 face_algos/haarcascade_frontalface_default.xml 10 out
+Note before the example line below I ran ```mkdir out``` to create the output directory I'm using
+
+> Example:```go run main.go sample 0 face_algos/haarcascade_frontalface_default.xml 10 out
 ```
 
 * **STEP 4 - Train Your Facebox Instance With Your Face Samples:**
@@ -81,7 +82,7 @@ go run main.go run [CAMERA_ID] [FACEBOX_URL] [FACE_ALGO]
 
 > Example:```go run main.go run 0 http://localhost:8080 face_algos/haarcascade_frontalface_default.xml```
 
--
+---
 
 You are done! hopefully your model is accurate enough. If not, you can always try adding more images by repeating steps 3 and 4
 
