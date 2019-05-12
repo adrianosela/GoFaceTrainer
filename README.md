@@ -82,7 +82,7 @@ go run main.go run [CAMERA_ID] [FACEBOX_URL] [FACE_ALGO]
 
 > Example:```go run main.go run 0 http://localhost:8080 face_algos/haarcascade_frontalface_default.xml```
 
----
+--
 
 You are done! hopefully your model is accurate enough. If not, you can always try adding more images by repeating steps 3 and 4
 
