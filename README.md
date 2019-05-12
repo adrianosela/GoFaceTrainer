@@ -51,20 +51,39 @@ $ docker run -p 8080:8080 -e "MB_KEY=$MB_KEY" machinebox/facebox
 ![](./tutorial_assets/step2.png)
 
 * **STEP 3 - Sample Your Face:**
-	* Change directory to the ```/photoshoot``` subdirectory of this repository and and run the Go program there with the name of the person whose face is being sampled as the first argument and the number of samples to be taken for that person as the second argument: ```go run main.go [NAME-OF-PERSON-IN-FRONT-OF-CAMERA] [N-SAMPLES]```
-	* The program will sample your face and publish them to your local Machine Box server to train the model. Note that while more samples means more accurate predictions can be made, if your Machine Box account is free/non-commercial, you are limited to 100 faces (samples). However, you can always remove faces in the Facebox UI if you hit this limit
-	* Repeat this step for as many people as you want your model to recognize
-	* If you would like the model to recognize multiple facial-expressions for the same person instead of different people, you can use names for the facial-expression as the first argument instead (e.g. "Winking", "Tonge out", "Sad Face", etc...)
- 
- > // TODO: Insert cmd line output example here
+	* Run the Go program in this directory with arguments as below. Note that you must create the output directory before running the command if it does not exist. You can look at the ```"sample"``` Makefile target for another example
 
-* **STEP 5 - Test Your Model:**
-	* Change directory to the ```/test-model``` subdirectory of this repository and and run the Go program there with no arguments: ```go run main.go```
-	* You are done! hopefully your model is accurate enough. If not, you can always try adding more images by repeating Step 4 with the same names you had used before
+```
+go run main.go sample [CAMERA_ID] [FACE_ALGO] [N_SAMPLES] [OUTPUT_DIR]
+```
 
- > // TODO: Insert cmd line output example here
- 
- > // TODO: Insert screen shot of program recognizing self
+> Example:```mkdir out```
+```go run main.go sample 0 face_algos/haarcascade_frontalface_default.xml 10 out
+```
+
+* **STEP 4 - Train Your Facebox Instance With Your Face Samples:**
+	* Run the Go program in this directory with arguments as follows:
+
+```
+go run main.go train [FACEBOX_URL] [FACES_SRC_DIR] [PERSON_NAME/EXPRESSION_NAME]
+``` 
+
+> Example: ```go run main.go train http://localhost:8080 out Adriano```
+
+* **STEP 5 - Repeat steps 3 and 4 for each person (or facial expression) you want the model to recognize**
+
+* **STEP 6 - Test Your Model:**
+	* Run the Go program in this directory with arguments as follows:
+
+```
+go run main.go run [CAMERA_ID] [FACEBOX_URL] [FACE_ALGO]
+```
+
+> Example:```go run main.go run 0 http://localhost:8080 face_algos/haarcascade_frontalface_default.xml```
+
+-
+
+You are done! hopefully your model is accurate enough. If not, you can always try adding more images by repeating steps 3 and 4
 
 ##### I hope you have enjoyed, issues and PRs are welcome!
 

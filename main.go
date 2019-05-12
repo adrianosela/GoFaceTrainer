@@ -12,7 +12,7 @@ import (
 
 func main() {
 	if len(os.Args) <= 1 {
-		log.Fatal("usage: go run cmd.go [sample/train/run] ...args")
+		log.Fatal("usage: go run main.go [sample/train/run] ...args")
 	}
 
 	switch os.Args[1] {
@@ -21,7 +21,7 @@ func main() {
 		var err error
 
 		if len(os.Args) != 6 {
-			log.Fatal("usage: go run cmd.go sample <device_id> <face_algo_path> <nsamples> <save_dir>")
+			log.Fatal("usage: go run main.go sample <device_id> <face_algo_path> <nsamples> <save_dir>")
 		}
 
 		if set.CaptureDeviceID, err = strconv.Atoi(os.Args[2]); err != nil {
@@ -45,7 +45,7 @@ func main() {
 		var err error
 
 		if len(os.Args) != 5 {
-			log.Fatal("usage: go run cmd.go train <facebox_url> <faces_src_dir> <person_name>")
+			log.Fatal("usage: go run main.go train <facebox_url> <faces_src_dir> <person_name>")
 		}
 
 		set.FaceboxAddress = os.Args[2]
@@ -63,7 +63,7 @@ func main() {
 		var err error
 
 		if len(os.Args) != 5 {
-			log.Fatal("usage: go run cmd.go run <device_id> <facebox_url> <face_algo_path>")
+			log.Fatal("usage: go run main.go run <device_id> <facebox_url> <face_algo_path>")
 		}
 
 		if set.CaptureDeviceID, err = strconv.Atoi(os.Args[2]); err != nil {
@@ -81,6 +81,6 @@ func main() {
 		d.Run()
 		return
 	default:
-		log.Fatal("usage: go run cmd.go [sample/train/run] ...args")
+		log.Fatal("usage: go run main.go [sample/train/run] ...args")
 	}
 }
