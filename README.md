@@ -59,8 +59,7 @@ go run main.go sample [CAMERA_ID] [FACE_ALGO] [N_SAMPLES] [OUTPUT_DIR]
 
 Note before the example line below I ran ```mkdir out``` to create the output directory I'm using
 
-> Example:```go run main.go sample 0 face_algos/haarcascade_frontalface_default.xml 10 out
-```
+> Example:```go run main.go sample 0 face_algos/haarcascade_frontalface_default.xml 10 out```
 
 * **STEP 4 - Train Your Facebox Instance With Your Face Samples:**
 	* Run the Go program in this directory with arguments as follows:
